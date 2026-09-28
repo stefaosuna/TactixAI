@@ -1,0 +1,6 @@
+{
+  "name": "TactixAI - Análisis Táctico y Rival en Tiempo Real",
+  "description": "Plataforma de videoanálisis asistida por IA para identificar patrones de movimiento, debilidades tácticas y generar reportes de ajuste estratégico en tiempo real.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
