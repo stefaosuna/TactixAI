@@ -18,8 +18,9 @@ interface HeaderProps {
   score: string;
   onChangeScore: (score: string) => void;
   minute: string;
-  onChangeMinute: (minute: string) => void;
+  onChangeMinute: React.Dispatch<React.SetStateAction<string>>;
   onOpenReportModal: () => void;
+  onResetMatch: () => void;
   hasApiKey: boolean;
   totalWeaknessesCount: number;
 }
@@ -32,23 +33,25 @@ export const Header: React.FC<HeaderProps> = ({
   minute,
   onChangeMinute,
   onOpenReportModal,
+  onResetMatch,
   hasApiKey,
   totalWeaknessesCount,
 }) => {
   const [timerRunning, setTimerRunning] = useState(true);
-  const [elapsedMinutes, setElapsedMinutes] = useState(24);
   const [isEditingRival, setIsEditingRival] = useState(false);
+  const [showConfirmReset, setShowConfirmReset] = useState(false);
 
-  // Match clock ticker
+  // Match clock ticker: cleanly updates parent minute when running without nested setState
   useEffect(() => {
     if (!timerRunning) return;
+
     const interval = setInterval(() => {
-      setElapsedMinutes((prev) => {
-        const next = prev + 1;
-        onChangeMinute(`${next}'`);
-        return next;
+      onChangeMinute((prevMinute) => {
+        const parsed = parseInt(prevMinute.replace(/\D/g, ''), 10);
+        const current = isNaN(parsed) ? 26 : parsed;
+        return `${current + 1}'`;
       });
-    }, 60000); // 1 real minute or adjust as needed
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [timerRunning, onChangeMinute]);
@@ -148,8 +151,41 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Action Button: Generate Full Report */}
+        {/* Action Buttons: Reset & Report */}
         <div className="flex items-center gap-2">
+          {/* Reset All Data Button */}
+          {showConfirmReset ? (
+            <div className="flex items-center gap-1 bg-slate-900 border border-red-500/50 rounded-lg p-1 animate-in fade-in zoom-in-95 duration-150">
+              <span className="text-[11px] font-medium text-red-300 px-1.5">
+                ¿Resetear todo?
+              </span>
+              <button
+                onClick={() => {
+                  onResetMatch();
+                  setShowConfirmReset(false);
+                }}
+                className="px-2 py-1 bg-red-600 hover:bg-red-500 text-white rounded text-[11px] font-bold transition-colors shadow"
+              >
+                Sí, limpiar
+              </button>
+              <button
+                onClick={() => setShowConfirmReset(false)}
+                className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px] font-medium transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowConfirmReset(true)}
+              className="flex items-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-red-300 border border-slate-800 hover:border-red-900/40 rounded-lg text-xs font-semibold transition-all"
+              title="Reiniciar y limpiar todo el análisis del partido"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Resetear Info</span>
+            </button>
+          )}
+
           <button
             onClick={onOpenReportModal}
             className="flex items-center gap-2 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-lg shadow-emerald-950/40 transition-all border border-emerald-500/40"

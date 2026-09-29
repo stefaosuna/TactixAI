@@ -7,6 +7,7 @@ export interface VideoMatchPlayerHandle {
   getCurrentTime: () => number;
   seekTo: (time: number) => void;
   isPlaying: () => boolean;
+  resetPlayback: () => void;
 }
 
 interface VideoMatchPlayerProps {
@@ -82,6 +83,13 @@ export const VideoMatchPlayer = forwardRef<VideoMatchPlayerHandle, VideoMatchPla
       }
     },
     isPlaying: () => isPlaying,
+    resetPlayback: () => {
+      setCurrentTime(0);
+      simStateRef.current.time = 0;
+      if (videoRef.current) {
+        videoRef.current.currentTime = 0;
+      }
+    },
   }));
 
   // Capture frame as base64

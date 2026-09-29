@@ -80,13 +80,16 @@ export const TacticalIntelligenceDeck: React.FC<TacticalIntelligenceDeckProps> =
 
           {/* Coach Quick Audio Alert Button */}
           <button
-            onClick={() => onPlayAudioBrief(audioBriefText)}
+            onClick={() => audioBriefText && onPlayAudioBrief(audioBriefText)}
+            disabled={!audioBriefText}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold border transition-all ${
-              isPlayingAudio
+              !audioBriefText
+                ? 'opacity-40 cursor-not-allowed bg-slate-900 border-slate-800 text-slate-500'
+                : isPlayingAudio
                 ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 animate-pulse'
                 : 'bg-slate-800 hover:bg-slate-700 text-slate-200 border-slate-700'
             }`}
-            title="Escuchar indicación táctica urgente por audio"
+            title={audioBriefText ? 'Escuchar indicación táctica urgente por audio' : 'Sin indicaciones de audio pendientes'}
           >
             {isPlayingAudio ? (
               <>

@@ -431,6 +431,31 @@ export default function App() {
     }
   };
 
+  // Reset all match analytics and start fresh
+  const handleResetMatch = () => {
+    setScore('0 - 0');
+    setMinute('0\'');
+    setRivalName('Equipo Rival');
+    setWeaknesses([]);
+    setPatterns([]);
+    setAdjustments([]);
+    setDetectedZones([]);
+    setTimelineEvents([]);
+    setTelestratorDrawings([]);
+    setSelectedZoneName(null);
+    setFullReport(null);
+    setAutoScanActive(false);
+    setTacticalSummary('Esperando captura de video o inicio del partido para generar el diagnóstico táctico en tiempo real.');
+    setFormationDetected('Analizando estructura...');
+    setDefensiveBlockHeight('Pendiente de escaneo');
+    setStatisticsConfidence(0);
+    setAudioBriefText('');
+
+    if (videoPlayerRef.current) {
+      videoPlayerRef.current.resetPlayback();
+    }
+  };
+
   // Select zone
   const handleSelectZone = (zone: TacticalZone) => {
     setSelectedZoneName(zone.name);
@@ -447,6 +472,7 @@ export default function App() {
         minute={minute}
         onChangeMinute={setMinute}
         onOpenReportModal={handleOpenFullReport}
+        onResetMatch={handleResetMatch}
         hasApiKey={hasApiKey}
         totalWeaknessesCount={weaknesses.length}
       />
